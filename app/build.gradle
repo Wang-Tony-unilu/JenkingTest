@@ -41,3 +41,19 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+task deploy {
+    group = 'deployment'
+    description = 'Deploys the application by copying the JAR to a target directory.'
+    
+    doLast {
+        def jarFile = tasks.named('jar').get().archiveFile.get().asFile
+        def targetDir = file('deployment') // Replace with your deployment path
+        
+        println "Deploying ${jarFile.name} to ${targetDir.absolutePath}"
+        
+        copy {
+            from jarFile
+            into targetDir
+        }
+    }
+}
