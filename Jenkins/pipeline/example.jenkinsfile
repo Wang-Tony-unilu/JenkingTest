@@ -2,9 +2,17 @@
 
 pipeline{
     agent any
+    tools{
+        gradle 'Gradle 8.11'
+    }
+    environment {
+        JAVA_HOME = '/usr/lib/jvm/java-11'
+        APP_ENV = 'production'
+    }
     stages{
         stage('Build') {
             steps {
+                echo "Java Home is: ${env.JAVA_HOME}"
                 echo 'Building...'
                 // Add build commands here, e.g., compile code, set up dependencies
                 sh 'gradle build'
@@ -26,4 +34,31 @@ pipeline{
             
     }
 }
+}
+node{
+    try {
+    stage('Build') {
+        withEnv(['APP_ENV=production', 'JAVA_HOME=/usr/lib/jvm/java-11']) {
+            echo "Building for environment: ${env.APP_ENV}"
+            sh 'gradle build'
+        }
+    }
+    stage('Test') {
+            echo 'Testing...'
+            // Add testing commands here, e.g., run test suites
+            sh 'gradle testClasses'
+            }
+    stage('Deploy') {
+            echo 'Deploying...'
+             // Add deployment commands here, e.g., copy files, deploy to server
+            sh 'gradle deploy'
+            }
+     
+        catch (Exception e) {
+        echo "Pipeline failed: ${e.message}"
+    } finally {
+        echo 'Cleaning up workspace...'
+        deleteDir() // Clean up workspace
+    }        
+    }
 }
