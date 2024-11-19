@@ -12,7 +12,7 @@ public class App{
     Calculator calculator = new Calculator();
 
     public void testAdd() {
-        int result = calculator.add(2, 3);
+        int result = calculator.add(2, 6);
         if (result == 5) {
             System.out.println("testAdd passed, result is :"+result);
         } else {
