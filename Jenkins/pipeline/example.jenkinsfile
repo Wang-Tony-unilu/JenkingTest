@@ -31,10 +31,26 @@ pipeline{
                 // Add deployment commands here, e.g., copy files, deploy to server
                 sh 'gradle deploy'
             }
-            
     }
 }
+  post {
+     always{
+            'Script has finished executing'
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+            
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+
 }
+
+
+
+
 node{
     try {
     stage('Build') {
@@ -60,5 +76,120 @@ node{
         echo 'Cleaning up workspace...'
         deleteDir() // Clean up workspace
     }        
+    }
+}
+
+
+
+//pipeline parallel
+
+pipeline {
+    agent any
+    
+    tools {
+        gradle 'Gradle 8.11'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Wang-Tony-unilu/JenkingTest.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                sh 'gradle build'
+            }
+        }
+        stage('Test') {
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        echo 'Running Unit Tests...'
+                        sh 'gradle testClasses'
+                    }
+                }
+                stage('Integration Tests') {
+                    steps {
+                        echo 'Running Integration Tests...'
+                        sh 'gradle integrationTest'
+                    }
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                sh 'gradle deploy'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Script has finished executing'
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
+
+
+//pipeline in a pipeline
+
+pipeline {
+    agent any
+    
+    tools {
+        gradle 'Gradle 8.11'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Wang-Tony-unilu/JenkingTest.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                sh 'gradle build'
+            }
+        }
+        stage('Test') {
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        echo 'Running Unit Tests...'
+                        sh 'gradle testClasses'
+                    }
+                }
+                stage('Integration Tests') {
+                    steps {
+                        echo 'Running Integration Tests...'
+                        sh 'gradle integrationTest'
+                    }
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                sh 'gradle deploy'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Script has finished executing'
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
     }
 }
