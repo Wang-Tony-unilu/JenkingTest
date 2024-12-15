@@ -16,7 +16,7 @@ public class App{
         if (result == 5) {
             System.out.println("testAdd passed, result is :"+result);
         } else {
-            System.out.println("testAdd failed: expected 5 but got " + result);
+            System.out.println("testAdd failed: expected 5 but got " + result)
         }
     }
 
