@@ -30,7 +30,7 @@ pipeline {
             steps {
                 echo 'Deploying...'
                 // Add deployment commands here, e.g., copy files, deploy to server
-                // sh 'gradle deploy'
+                sh 'gradle deploy'
             }
               post {
         success {
